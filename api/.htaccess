@@ -1,0 +1,41 @@
+# File: api/.htaccess
+RewriteEngine On
+RewriteBase /simpro-lite/api/
+
+# Configuración CORS
+<IfModule mod_headers.c>
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
+    
+    # Manejar solicitudes preflight OPTIONS
+    RewriteCond %{REQUEST_METHOD} OPTIONS
+    RewriteRule ^(.*)$ $1 [R=200,L]
+</IfModule>
+
+# Reglas de reescritura
+<IfModule mod_rewrite.c>
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
+
+# Seguridad básica
+Options -Indexes -MultiViews
+
+# Protección de archivos
+<FilesMatch "\.(env|config|sql|htaccess)$">
+    Require all denied
+</FilesMatch>
+
+# Configuración PHP
+<IfModule mod_php.c>
+    php_value upload_max_filesize 20M
+    php_value post_max_size 20M
+</IfModule>
+
+# Permitir acceso a archivos PHP
+<Files "*.php">
+    Order allow,deny
+    Allow from all
+</Files>
